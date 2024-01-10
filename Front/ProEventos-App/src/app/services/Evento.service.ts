@@ -1,7 +1,7 @@
 import { Evento } from '../models/Evento';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, take } from 'rxjs';
 
 @Injectable()
 
@@ -11,7 +11,7 @@ export class EventoService {
   constructor(private http: HttpClient) { }
 
   public getEventos(): Observable<Evento[]> {
-    return this.http.get<Evento[]>(this.baseURL);
+    return this.http.get<Evento[]>(this.baseURL).pipe(take(1));
   }
 
   public getEventosByTema(tema: string): Observable<Evento[]> {
@@ -27,10 +27,12 @@ export class EventoService {
   }
 
   public put(evento: Evento): Observable<Evento> {
-    return this.http.put<Evento>(`${this.baseURL}/${evento.id}`, evento);
+    return this.http.put<Evento>(`${this.baseURL}/${evento.id}`, evento)
+    .pipe(take(1));
   }
 
   public deleteEvento(id: number): Observable<any> {
-    return this.http.delete(`${this.baseURL}/${id}`);
+    return this.http.delete(`${this.baseURL}/${id}`)
+    .pipe(take(1));
   }
 }

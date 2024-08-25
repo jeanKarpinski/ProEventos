@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using ProEventos.Application.Contratos;
@@ -90,26 +92,23 @@ namespace ProEventos.Application
         }
 
         public async Task<PageList<EventoDto>> GetAllEventosAsync(int userId, PageParams pageParams, bool includePalestrantes = false)
-        {
-            try
-            {
-                var eventos = await _eventoPersist.GetAllEventosAsync(userId, pageParams, includePalestrantes);
-                if (eventos == null) return null;
+{
+    try
+    {
+        var eventos = await _eventoPersist.GetAllEventosAsync(userId, pageParams, includePalestrantes);
 
-                var resultado = _mapper.Map<PageList<EventoDto>>(eventos);
+        var eventosDto = _mapper.Map<List<EventoDto>>(eventos); // Mapeia eventos para EventoDto
+        var resultado = new PageList<EventoDto>(eventosDto, eventos.TotalCount, eventos.CurrentPage, eventos.PageSize); // Cria o resultado manualmente para garantir que está correto
 
-                resultado.CurrentPage = eventos.CurrentPage;
-                resultado.TotalPages = eventos.TotalPages;
-                resultado.PageSize = eventos.PageSize;
-                resultado.TotalCount = eventos.TotalCount;
-
-                return resultado;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
+        return resultado;
+    }
+    catch (Exception ex)
+    {
+        // Considera a utilização de um sistema de logging apropriado
+        Console.WriteLine($"Erro ao obter eventos: {ex.Message}");
+        throw;
+    }
+}
 
         public async Task<EventoDto> GetEventoByIdAsync(int userId, int eventoId, bool includePalestrantes = false)
         {

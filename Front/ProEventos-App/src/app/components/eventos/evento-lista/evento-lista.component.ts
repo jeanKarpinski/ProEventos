@@ -85,21 +85,22 @@ export class EventoListaComponent implements OnInit {
 
   public carregarEventos(): void {
     this.spinner.show();
-
+  
     this.eventoService
       .getEventos(this.pagination.currentPage, this.pagination.itemsPerPage)
-      .subscribe(
-        (paginatedResult: PaginatedResult<Evento[]>) => {
+      .subscribe({
+        next: (paginatedResult: PaginatedResult<Evento[]>) => {
           this.eventos = paginatedResult.result;
           this.pagination = paginatedResult.pagination;
         },
-        (error: any) => {
+        error: (error: any) => {
           this.spinner.hide();
           this.toastr.error('Erro ao Carregar os Eventos', 'Erro!');
-        }
-      )
-      .add(() => this.spinner.hide());
+        },
+        complete: () => this.spinner.hide()
+      });
   }
+  
 
   openModal(event: any, template: TemplateRef<any>, eventoId: number): void {
     event.stopPropagation();

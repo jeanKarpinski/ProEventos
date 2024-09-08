@@ -92,18 +92,22 @@ export class EventoDatalheComponent implements OnInit {
   }
 
   public carregarLotes(): void {
-    this.loteService.getLotesByEventoId(this.eventoId).subscribe(
-      (lotesRetorno: Lote[]) => {
-        lotesRetorno.forEach(lote => {
-          this.lotes.push(this.criarLote(lote));
-        });
-      },
-      (error: any) => {
-        this.toastr.error('Erro ao tentar carregar lotes', 'Erro');
-        console.log(error);
-      }
-    ).add(() => this.spinner.hide());
+    this.loteService
+      .getLotesByEventoId(this.eventoId)
+      .subscribe({
+        next: (lotesRetorno: Lote[]) => {
+          lotesRetorno.forEach((lote) => {
+            this.lotes.push(this.criarLote(lote));
+          });
+        },
+        error: (error: any) => {
+          this.toastr.error('Erro ao tentar carregar lotes', 'Erro');
+          console.error('erro>', error);
+        },
+        complete: () => this.spinner.hide()
+      });
   }
+  
 
   ngOnInit(): void {
     this.carregarEvento();

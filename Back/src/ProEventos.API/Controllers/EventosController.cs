@@ -54,7 +54,7 @@ namespace ProEventos.API.Controllers
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
-        {
+        { 
             try
             {
                 var evento = await _eventoService.GetEventoByIdAsync(User.GetUserId(), id, true);
